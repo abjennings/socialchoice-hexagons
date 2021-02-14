@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<style>
+div.hex {
+  width:24px;
+  height:21px;
+  background-image:url(./greyhex.gif);
+  background-size:contain;
+}
+div.hex.red {
+  background-image:url(./redhex.gif);
+}
+div.hex.green {
+  background-image:url(./greenhex.gif);
+}
+div.hex.blue {
+  background-image:url(./bluehex.gif);
+}
+div.hex.rg {
+  background-image:url(./rghex.gif);
+}
+div.hex.rb {
+  background-image:url(./rbhex.gif);
+}
+div.hex.bg {
+  background-image:url(./bghex.gif);
+}
+div.label {
+  position:absolute;
+  font-weight:bold;
+  font-size:36px;
+}
+button.m, div.m {
+  position:absolute;
+  left:700px;
+}
+div#profile {
+  display:none;
+  position:absolute;
+  left:20px;
+  top:20px;
+  background:#ff8;
+  border: 1px solid #880;
+  color: #880;
+  border-radius: 5px;
+  padding: 5px;
+}
+a#swapLgMd, a#swapMdSm {
+  display:inline-block;
+  background-image:url(swap.png);
+  width:13px;
+  height:18px;
+  vertical-align:middle;
+}
+div#iiav_title, div#iiav {
+  position:absolute;
+  left:900px;
+}
+div#iiav_title {
+  top:60px;
+  font-weight:bold;
+  text-decoration:underline;
+}
+div#iiav {
+  top:80px;
+  width:300px;
+  height:500px;
+  border:1px solid #888;
+  padding:5px;
+  overflow:scroll;
+}
+</style>
+<div id="hexes"></div>
+<div class="label" style="left:53px; top:295px; color:#f00;">R</div>
+<div class="label" style="left:528px; top:20px; color:#0c0;">G</div>
+<div class="label" style="left:528px; top:570px; color:#00f;">B</div>
+<div class="m" style="top:20px;">
+  <b>Large:</b> <span id="v_lg">v1</span>
+  &nbsp;&nbsp;&nbsp;<a id="swapLgMd" href="#"></a>&nbsp;&nbsp;&nbsp;
+  <b>Medium:</b> <span id="v_md">v2</span>
+  &nbsp;&nbsp;&nbsp;<a id="swapMdSm" href="#"></a>&nbsp;&nbsp;&nbsp;
+  <b>Small:</b> <span id="v_sm">v3</span>
+</div>
+<button id="d1" class="m" style="top:60px;">Make v1 dictator</button>
+<button id="d2" class="m" style="top:90px;">Make v2 dictator</button>
+<button id="d3" class="m" style="top:120px;">Make v3 dictator</button>
+<button id="clr" class="m" style="top:170px;">Clear</button>
+<button id="unan" class="m" style="top:220px;">Apply Unanimity</button>
+<button id="rand" class="m" style="top:250px;">Fill randomly</button>
+<button id="plur" class="m" style="top:300px;">Show Plurality</button>
+<button id="borda" class="m" style="top:330px;">Show Borda</button>
+<button id="cond" class="m" style="top:360px;">Show Condorcet</button>
+<button id="iiar" class="m" style="top:410px;">Apply IIA, 1 round</button>
+<button id="iia1" class="m" style="top:440px;">Show IIA, 1 step</button>
+<div id="profile">
+  Voter 1: <span id="v1line"></span><br/>
+  Voter 2: <span id="v2line"></span><br/>
+  Voter 3: <span id="v3line"></span>
+</div>
+<div id="iiav_title">IIA Violations (<span id="iiav_count">0</span>)</div>
+<div id="iiav">(No violations)</div>
+<script>
+var hexesElt = document.getElementById('hexes');
+var offsets = [{x:19,y:0},{x:38,y:10.5},{x:38,y:32},{x:19,y:42.5},{x:0,y:32},{x:0,y:10.5}];
+var rankings = ['grb','gbr','bgr','brg','rbg','rgb'];
+var rkIdx = {grb:0, gbr:1, bgr:2, brg:3, rbg:4, rgb:5};
+var profiles = [];
+
+for (var v1 = 0; v1 < 6; ++v1) {
+  for (var v2 = 0; v2 < 6; ++v2) {
+    for (var v3 = 0; v3 < 6; ++v3) {
+      var e = document.createElement('div');
+      e.className = "hex";
+      e.style.position = "absolute";
+      var x = 100 + offsets[v3].x + offsets[v2].x*3.1 + offsets[v1].x*9.9;
+      e.style.left = x+"px";
+      var y = 20 + offsets[v3].y + offsets[v2].y*3.1 + offsets[v1].y*9.9;
+      e.style.top = y+"px";
+      hexesElt.appendChild(e);
+      var profile = { v1:v1, v2:v2, v3:v3, x:x, y:y, elt:e, winner:'', idx:profiles.length };
+      e.onclick = mkClickHandler(profile);
+      e.onmouseenter = mkMouseEnterHandler(profile);
+      e.onmouseleave = mkMouseLeaveHandler(profile);
+      profiles.push(profile);
+    }
+  }
+}
+
+function eachProfile(f) {
+  for (var i = 0; i < 216; ++i) {
+    f(profiles[i]);
+  }
+}
+
+var classNameForWinner = {r:'hex red', g:'hex green', b:'hex blue', '':'hex', rg:'hex rg', rb:'hex rb', bg:'hex bg'};
+function setWinner(p, w) {
+  if (classNameForWinner[w] !== undefined) {
+    p.winner = w;
+    p.elt.className = classNameForWinner[w];
+  }
+}
+
+var rotateWinner = {r:'g', g:'b', b:'rg', '':'r', rg:'rb', rb:'bg', bg:''};
+function mkClickHandler(p) {
+  return function() {
+    var newWinner = rotateWinner[p.winner];
+    if (newWinner !== undefined) {
+      setWinner(p, newWinner);
+      checkIIA();
+    }
+  };
+}
+
+function htmlForVote(v) {
+  var ranking = rankings[v].toUpperCase();
+  return ranking.charAt(0) + " &gt; " + ranking.charAt(1) + " &gt; " + ranking.charAt(2);
+}
+
+var showingProfileIdx = -1;
+function mkMouseEnterHandler(p) {
+  return function() {
+    document.getElementById('v1line').innerHTML = htmlForVote(p.v1);
+    document.getElementById('v2line').innerHTML = htmlForVote(p.v2);
+    document.getElementById('v3line').innerHTML = htmlForVote(p.v3);
+    document.getElementById('profile').style.display = 'block';
+    showingProfileIdx = p.idx;
+    p.stillIn = true;
+  };
+}
+
+function mkMouseLeaveHandler(p) {
+  return function() {
+    p.stillIn = false;
+    setTimeout(hideProfile, 500);
+  };
+}
+
+function hideProfile() {
+  if (showingProfileIdx !== -1) {
+    var p = profiles[showingProfileIdx];
+    if (!p.stillIn) {
+      document.getElementById('profile').style.display = 'none';
+      showingProfileIdx = -1;
+    }
+  }
+}
+
+var progress = 20;
+function moveCells(pri1, pri2, pri3) {
+  eachProfile(function(p) {
+    p.newx = 100 + offsets[p[pri3]].x + offsets[p[pri2]].x*3.1 + offsets[p[pri1]].x*9.9;
+    p.newy = 20 + offsets[p[pri3]].y + offsets[p[pri2]].y*3.1 + offsets[p[pri1]].y*9.9;
+  });
+  if (progress === 20) {
+    setTimeout(makeProgress, 10);
+  }
+  progress = 0;
+}
+function makeProgress() {
+  var a = (19 - progress);
+  var b = a + 1;
+  eachProfile(function(p) {
+    p.x = (p.x * a + p.newx) / b;
+    p.y = (p.y * a + p.newy) / b;
+    p.elt.style.left = p.x+"px";
+    p.elt.style.top = p.y+"px";
+  });
+  progress += 1;
+  if (progress < 20) {
+    setTimeout(makeProgress, 10);
+  }
+}
+
+function makeDictator(who) {
+  eachProfile(function(p) {
+    setWinner(p, rankings[p[who]].charAt(0));
+  });
+  checkIIA();
+}
+
+var largeVoter = 1, mediumVoter = 2, smallVoter = 3;
+function setVoters(lg, md, sm) {
+  largeVoter = lg;
+  mediumVoter = md;
+  smallVoter = sm;
+  moveCells('v' + largeVoter, 'v' + mediumVoter, 'v' + smallVoter);
+  document.getElementById('v_lg').innerHTML = 'v' + largeVoter;
+  document.getElementById('v_md').innerHTML = 'v' + mediumVoter;
+  document.getElementById('v_sm').innerHTML = 'v' + smallVoter;
+}
+document.getElementById('swapLgMd').onclick = function() {
+  setVoters(mediumVoter, largeVoter, smallVoter);
+  return false;
+};
+document.getElementById('swapMdSm').onclick = function() {
+  setVoters(largeVoter, smallVoter, mediumVoter);
+  return false;
+};
+
+document.getElementById('d1').onclick = function() { makeDictator('v1'); };
+document.getElementById('d2').onclick = function() { makeDictator('v2'); };
+document.getElementById('d3').onclick = function() { makeDictator('v3'); };
+
+document.getElementById('clr').onclick = function() {
+  eachProfile(function(p) {
+    setWinner(p, '');
+  });
+  checkIIA();
+};
+
+document.getElementById('unan').onclick = function() {
+  eachProfile(function(p) {
+    var v1fav = rankings[p.v1].charAt(0);
+    var v2fav = rankings[p.v2].charAt(0);
+    var v3fav = rankings[p.v3].charAt(0);
+    if (v1fav === v2fav && v1fav === v3fav) {
+      setWinner(p, v1fav);
+    }
+  });
+  checkIIA();
+};
+
+document.getElementById('rand').onclick = function() {
+  eachProfile(function(p) {
+    if (p.winner === '') {
+      var x = Math.floor(Math.random() * 3);
+      setWinner(p, {0:'r', 1:'g', 2:'b'}[x]);
+    }
+  });
+  checkIIA();
+};
+
+document.getElementById('borda').onclick = function() {
+  eachProfile(function(p) {
+    var v1r = rankings[p.v1], v2r = rankings[p.v2], v3r = rankings[p.v3];
+    var points = {r:0, g:0, b:0};
+    points[v1r.charAt(0)] += 2;
+    points[v1r.charAt(1)] += 1;
+    points[v2r.charAt(0)] += 2;
+    points[v2r.charAt(1)] += 1;
+    points[v3r.charAt(0)] += 2;
+    points[v3r.charAt(1)] += 1;
+    if (points.r > points.g && points.r > points.b) {
+      setWinner(p, 'r');
+    } else if (points.g > points.r && points.g > points.b) {
+      setWinner(p, 'g');
+    } else if (points.b > points.r && points.b > points.g) {
+      setWinner(p, 'b');
+    } else {
+      setWinner(p, '');
+    }
+  });
+  checkIIA();
+};
+
+function condorcetMatrix(p) {
+  var v1r = rankings[p.v1], v2r = rankings[p.v2], v3r = rankings[p.v3];
+  var v11 = v1r.charAt(0), v12 = v1r.charAt(1), v13 = v1r.charAt(2);
+  var v21 = v2r.charAt(0), v22 = v2r.charAt(1), v23 = v2r.charAt(2);
+  var v31 = v3r.charAt(0), v32 = v3r.charAt(1), v33 = v3r.charAt(2);
+  var points = {rg:0, rb:0, gr:0, gb:0, br:0, bg:0};
+  points[v11 + v12] += 1;
+  points[v11 + v13] += 1;
+  points[v12 + v13] += 1;
+  points[v21 + v22] += 1;
+  points[v21 + v23] += 1;
+  points[v22 + v23] += 1;
+  points[v31 + v32] += 1;
+  points[v31 + v33] += 1;
+  points[v32 + v33] += 1;
+  return points;
+}
+
+document.getElementById('cond').onclick = function() {
+  eachProfile(function(p) {
+    var points = condorcetMatrix(p);
+    if (points.rb > points.br && points.rg > points.gr) {
+      setWinner(p, 'r');
+    } else if (points.br > points.rb && points.bg > points.gb) {
+      setWinner(p, 'b');
+    } else if (points.gr > points.rg && points.gb > points.bg) {
+      setWinner(p, 'g');
+    } else {
+      setWinner(p, '');
+    }
+  });
+  checkIIA();
+};
+
+document.getElementById('plur').onclick = function() {
+  eachProfile(function(p) {
+    var v1r = rankings[p.v1], v2r = rankings[p.v2], v3r = rankings[p.v3];
+    var points = {r:0, g:0, b:0};
+    points[v1r.charAt(0)] += 1;
+    points[v2r.charAt(0)] += 1;
+    points[v3r.charAt(0)] += 1;
+    if (points.r > points.g && points.r > points.b) {
+      setWinner(p, 'r');
+    } else if (points.g > points.r && points.g > points.b) {
+      setWinner(p, 'g');
+    } else if (points.b > points.r && points.b > points.g) {
+      setWinner(p, 'b');
+    } else {
+      setWinner(p, '');
+    }
+  });
+  checkIIA();
+};
+
+var withoutMap = {r:'bg', g:'rb', b:'rg'};
+function Run_IIA(violation_cb, change_cb) {
+  eachProfile(function(p) {
+    var v1r = rankings[p.v1], v2r = rankings[p.v2], v3r = rankings[p.v3];
+    var v11 = v1r.charAt(0), v12 = v1r.charAt(1), v13 = v1r.charAt(2);
+    var v21 = v2r.charAt(0), v22 = v2r.charAt(1), v23 = v2r.charAt(2);
+    var v31 = v3r.charAt(0), v32 = v3r.charAt(1), v33 = v3r.charAt(2);
+    var w = p.winner;
+
+    function IIATest(v1r_, v2r_, v3r_, swap1, swap2, nonswap) {
+      var pidx = rkIdx[v1r_] * 36 + rkIdx[v2r_] * 6 + rkIdx[v3r_];
+      var w_ = profiles[pidx].winner;
+
+      function shouldnt_win(c) {
+        if (w_ === c) {
+          violation_cb(v1r, v2r, v3r, w, v1r_, v2r_, v3r_, w_);
+        } if (w_ === '') {
+          change_cb(pidx, withoutMap[c]);
+        } else if (w_.length === 2) {
+          var w_1 = w_.charAt(0), w_2 = w_.charAt(1);
+          if (w_1 === c) {
+            change_cb(pidx, w_2);
+          } else if (w_2 === c) {
+            change_cb(pidx, w_1);
+          }
+        }
+      }
+
+      if (w === swap1 || w === swap2 || w === swap1 + swap2 || w === swap2 + swap1) {
+        shouldnt_win(nonswap);
+      }
+      if (w === nonswap) {
+        shouldnt_win(swap1);
+        shouldnt_win(swap2);
+      }
+    }
+
+    IIATest(v11 + v13 + v12, v2r, v3r, v12, v13, v11);
+    IIATest(v12 + v11 + v13, v2r, v3r, v11, v12, v13);
+    IIATest(v1r, v21 + v23 + v22, v3r, v22, v23, v21);
+    IIATest(v1r, v22 + v21 + v23, v3r, v21, v22, v23);
+    IIATest(v1r, v2r, v31 + v33 + v32, v32, v33, v31);
+    IIATest(v1r, v2r, v32 + v31 + v33, v31, v32, v33);
+  });
+
+}
+
+document.getElementById('iia1').onclick = function() {
+  var change = null, violations = false;
+  function add_change(pidx, w) {
+    change = [pidx, w];
+  }
+  function add_violation() {
+    violations = true;
+  }
+  Run_IIA(add_violation, add_change);
+
+  if (violations) {
+    alert("IIA violation(s) found");
+  } else if (change !== null) {
+    var pidx = change[0];
+    var w = change[1];
+    var p = profiles[pidx];
+    alert("Set " + rankings[p.v1] + "," + rankings[p.v2] + "," + rankings[p.v3] + " to " + w);
+  } else {
+    alert("No IIA steps");
+  }
+};
+
+document.getElementById('iiar').onclick = function() {
+  var changes = [], violations = false;
+  function add_change(pidx, w) {
+    changes.push([pidx, w]);
+  }
+  function add_violation() {
+    violations = true;
+  }
+  Run_IIA(add_violation, add_change);
+
+  if (violations) {
+    alert("IIA violation(s) found");
+  } else {
+    for (var i = 0; i < changes.length; ++i) {
+      var pidx = changes[i][0];
+      var w = changes[i][1];
+      setWinner(profiles[pidx], w);
+    }
+    checkIIA();
+  }
+};
+
+function checkIIA() {
+  var violations = [];
+  function add_violation(v1r, v2r, v3r, w, v1r_, v2r_, v3r_, w_) {
+    violations.push(v1r + "," + v2r + "," + v3r + ":" + w + "=>" + v1r_ + "," + v2r_ + "," + v3r_ + ":" + w_);
+  }
+  Run_IIA(add_violation, function() {});
+
+  var vstr = "";
+  for (var i = 0; i < violations.length; ++i) {
+    if (vstr !== "") vstr += "\n";
+    vstr += violations[i];
+  }
+  if (vstr === "") vstr = "(No violations)";
+
+  document.getElementById('iiav').innerHTML = vstr;
+  document.getElementById('iiav_count').innerHTML = violations.length + '';
+};
+</script>
