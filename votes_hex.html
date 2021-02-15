@@ -8,15 +8,23 @@ div.hex {
   position: absolute;
   background: url("hex_bkgd.png");
 }
+div.label {
+  position:absolute;
+  font-weight:bold;
+  font-size:36px;
+}
 </style>
 <center>
 <h1>Three candidates, 6 possible ranked-ballot inputs</h1>
-<div style="width: 300px; position: relative;">
-  <div class="hex" style="left:0px; top:65px;">R &gt; G &gt; B</div>
-  <div class="hex" style="left:100px; top:0px;">G &gt; R &gt; B</div>
-  <div class="hex" style="left:200px; top:65px;">G &gt; B &gt; R</div>
-  <div class="hex" style="left:200px; top:190px;">B &gt; G &gt; R</div>
-  <div class="hex" style="left:100px; top:255px;">B &gt; R &gt; G</div>
-  <div class="hex" style="left:0px; top:190px;">R &gt; B &gt; G</div>
+<div style="width: 400px; position: relative;">
+  <div class="label" style="left:0px; top:192px; color:#f00;">R</div>
+  <div class="label" style="left:290px; top:8px; color:#0c0;">G</div>
+  <div class="label" style="left:290px; top:376px; color:#00f;">B</div>
+  <div class="hex" style="left:50px; top:100px;">R &gt; G &gt; B</div>
+  <div class="hex" style="left:150px; top:35px;">G &gt; R &gt; B</div>
+  <div class="hex" style="left:250px; top:100px;">G &gt; B &gt; R</div>
+  <div class="hex" style="left:250px; top:225px;">B &gt; G &gt; R</div>
+  <div class="hex" style="left:150px; top:290px;">B &gt; R &gt; G</div>
+  <div class="hex" style="left:50px; top:225px;">R &gt; B &gt; G</div>
 </div>
 </center>
