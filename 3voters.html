@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<style>
+td { border: 1px solid black; padding: 10px; }
+</style>
+<center>
+<h1>Three voters, Three candidates, 6<sup>3</sup>=216 possible voter profiles</h1>
+<table>
+ <tr><td>Voter 1</td><td>Voter 2</td><td>Voter 3</td></tr>
+ <tr><td rowspan="6">R &gt; G &gt; B</td>
+   <td>R &gt; G &gt; B</td>
+     <td>R &gt; G &gt; B<br/>R &gt; B &gt; G<br/>G &gt; R &gt; B<br/>G &gt; B &gt; R<br/>B &gt; R &gt; G<br/>B &gt; G &gt; R</td></tr>
+ <tr><td>R &gt; B &gt; G</td>
+     <td>R &gt; G &gt; B<br/>R &gt; B &gt; G<br/>G &gt; R &gt; B<br/>G &gt; B &gt; R<br/>B &gt; R &gt; G<br/>B &gt; G &gt; R</td></tr>
+ <tr><td>G &gt; R &gt; B</td>
+     <td>R &gt; G &gt; B<br/>R &gt; B &gt; G<br/>G &gt; R &gt; B<br/>G &gt; B &gt; R<br/>B &gt; R &gt; G<br/>B &gt; G &gt; R</td></tr>
+ <tr><td>G &gt; B &gt; R</td>
+     <td>R &gt; G &gt; B<br/>R &gt; B &gt; G<br/>G &gt; R &gt; B<br/>G &gt; B &gt; R<br/>B &gt; R &gt; G<br/>B &gt; G &gt; R</td></tr>
+ <tr><td>B &gt; R &gt; G</td>
+     <td>R &gt; G &gt; B<br/>R &gt; B &gt; G<br/>G &gt; R &gt; B<br/>G &gt; B &gt; R<br/>B &gt; R &gt; G<br/>B &gt; G &gt; R</td></tr>
+ <tr><td>B &gt; G &gt; R</td>
+     <td>R &gt; G &gt; B<br/>R &gt; B &gt; G<br/>G &gt; R &gt; B<br/>G &gt; B &gt; R<br/>B &gt; R &gt; G<br/>B &gt; G &gt; R</td></tr>
+ <tr><td rowspan="6">R &gt; B &gt; G</td>
+   <td>R &gt; G &gt; B</td>
+     <td>R &gt; G &gt; B<br/>R &gt; B &gt; G<br/>G &gt; R &gt; B<br/>G &gt; B &gt; R<br/>B &gt; R &gt; G<br/>B &gt; G &gt; R</td></tr>
+ <tr><td>R &gt; B &gt; G</td>
+     <td>R &gt; G &gt; B<br/>R &gt; B &gt; G<br/>G &gt; R &gt; B<br/>G &gt; B &gt; R<br/>B &gt; R &gt; G<br/>B &gt; G &gt; R</td></tr>
+ <tr><td>G &gt; R &gt; B</td>
+     <td>R &gt; G &gt; B<br/>R &gt; B &gt; G<br/>G &gt; R &gt; B<br/>G &gt; B &gt; R<br/>B &gt; R &gt; G<br/>B &gt; G &gt; R</td></tr>
+ <tr><td>G &gt; B &gt; R</td>
+     <td>R &gt; G &gt; B<br/>R &gt; B &gt; G<br/>G &gt; R &gt; B<br/>G &gt; B &gt; R<br/>B &gt; R &gt; G<br/>B &gt; G &gt; R</td></tr>
+ <tr><td>B &gt; R &gt; G</td>
+     <td>R &gt; G &gt; B<br/>R &gt; B &gt; G<br/>G &gt; R &gt; B<br/>G &gt; B &gt; R<br/>B &gt; R &gt; G<br/>B &gt; G &gt; R</td></tr>
+ <tr><td>B &gt; G &gt; R</td>
+     <td>R &gt; G &gt; B<br/>R &gt; B &gt; G<br/>G &gt; R &gt; B<br/>G &gt; B &gt; R<br/>B &gt; R &gt; G<br/>B &gt; G &gt; R</td></tr>
+ <tr><td rowspan="6">G &gt; R &gt; B</td>
+   <td>R &gt; G &gt; B</td>
+     <td>R &gt; G &gt; B<br/>R &gt; B &gt; G<br/>G &gt; R &gt; B<br/>G &gt; B &gt; R<br/>B &gt; R &gt; G<br/>B &gt; G &gt; R</td></tr>
+ <tr><td>R &gt; B &gt; G</td>
+     <td>R &gt; G &gt; B<br/>R &gt; B &gt; G<br/>G &gt; R &gt; B<br/>G &gt; B &gt; R<br/>B &gt; R &gt; G<br/>B &gt; G &gt; R</td></tr>
+ <tr><td>G &gt; R &gt; B</td>
+     <td>R &gt; G &gt; B<br/>R &gt; B &gt; G<br/>G &gt; R &gt; B<br/>G &gt; B &gt; R<br/>B &gt; R &gt; G<br/>B &gt; G &gt; R</td></tr>
+ <tr><td>G &gt; B &gt; R</td>
+     <td>R &gt; G &gt; B<br/>R &gt; B &gt; G<br/>G &gt; R &gt; B<br/>G &gt; B &gt; R<br/>B &gt; R &gt; G<br/>B &gt; G &gt; R</td></tr>
+ <tr><td>B &gt; R &gt; G</td>
+     <td>R &gt; G &gt; B<br/>R &gt; B &gt; G<br/>G &gt; R &gt; B<br/>G &gt; B &gt; R<br/>B &gt; R &gt; G<br/>B &gt; G &gt; R</td></tr>
+ <tr><td>B &gt; G &gt; R</td>
+     <td>R &gt; G &gt; B<br/>R &gt; B &gt; G<br/>G &gt; R &gt; B<br/>G &gt; B &gt; R<br/>B &gt; R &gt; G<br/>B &gt; G &gt; R</td></tr>
+ <tr><td rowspan="6">G &gt; B &gt; R</td>
+   <td>R &gt; G &gt; B</td>
+     <td>R &gt; G &gt; B<br/>R &gt; B &gt; G<br/>G &gt; R &gt; B<br/>G &gt; B &gt; R<br/>B &gt; R &gt; G<br/>B &gt; G &gt; R</td></tr>
+ <tr><td>R &gt; B &gt; G</td>
+     <td>R &gt; G &gt; B<br/>R &gt; B &gt; G<br/>G &gt; R &gt; B<br/>G &gt; B &gt; R<br/>B &gt; R &gt; G<br/>B &gt; G &gt; R</td></tr>
+ <tr><td>G &gt; R &gt; B</td>
+     <td>R &gt; G &gt; B<br/>R &gt; B &gt; G<br/>G &gt; R &gt; B<br/>G &gt; B &gt; R<br/>B &gt; R &gt; G<br/>B &gt; G &gt; R</td></tr>
+ <tr><td>G &gt; B &gt; R</td>
+     <td>R &gt; G &gt; B<br/>R &gt; B &gt; G<br/>G &gt; R &gt; B<br/>G &gt; B &gt; R<br/>B &gt; R &gt; G<br/>B &gt; G &gt; R</td></tr>
+ <tr><td>B &gt; R &gt; G</td>
+     <td>R &gt; G &gt; B<br/>R &gt; B &gt; G<br/>G &gt; R &gt; B<br/>G &gt; B &gt; R<br/>B &gt; R &gt; G<br/>B &gt; G &gt; R</td></tr>
+ <tr><td>B &gt; G &gt; R</td>
+     <td>R &gt; G &gt; B<br/>R &gt; B &gt; G<br/>G &gt; R &gt; B<br/>G &gt; B &gt; R<br/>B &gt; R &gt; G<br/>B &gt; G &gt; R</td></tr>
+ <tr><td rowspan="6">B &gt; R &gt; G</td>
+   <td>R &gt; G &gt; B</td>
+     <td>R &gt; G &gt; B<br/>R &gt; B &gt; G<br/>G &gt; R &gt; B<br/>G &gt; B &gt; R<br/>B &gt; R &gt; G<br/>B &gt; G &gt; R</td></tr>
+ <tr><td>R &gt; B &gt; G</td>
+     <td>R &gt; G &gt; B<br/>R &gt; B &gt; G<br/>G &gt; R &gt; B<br/>G &gt; B &gt; R<br/>B &gt; R &gt; G<br/>B &gt; G &gt; R</td></tr>
+ <tr><td>G &gt; R &gt; B</td>
+     <td>R &gt; G &gt; B<br/>R &gt; B &gt; G<br/>G &gt; R &gt; B<br/>G &gt; B &gt; R<br/>B &gt; R &gt; G<br/>B &gt; G &gt; R</td></tr>
+ <tr><td>G &gt; B &gt; R</td>
+     <td>R &gt; G &gt; B<br/>R &gt; B &gt; G<br/>G &gt; R &gt; B<br/>G &gt; B &gt; R<br/>B &gt; R &gt; G<br/>B &gt; G &gt; R</td></tr>
+ <tr><td>B &gt; R &gt; G</td>
+     <td>R &gt; G &gt; B<br/>R &gt; B &gt; G<br/>G &gt; R &gt; B<br/>G &gt; B &gt; R<br/>B &gt; R &gt; G<br/>B &gt; G &gt; R</td></tr>
+ <tr><td>B &gt; G &gt; R</td>
+     <td>R &gt; G &gt; B<br/>R &gt; B &gt; G<br/>G &gt; R &gt; B<br/>G &gt; B &gt; R<br/>B &gt; R &gt; G<br/>B &gt; G &gt; R</td></tr>
+ <tr><td rowspan="6">B &gt; G &gt; R</td>
+   <td>R &gt; G &gt; B</td>
+     <td>R &gt; G &gt; B<br/>R &gt; B &gt; G<br/>G &gt; R &gt; B<br/>G &gt; B &gt; R<br/>B &gt; R &gt; G<br/>B &gt; G &gt; R</td></tr>
+ <tr><td>R &gt; B &gt; G</td>
+     <td>R &gt; G &gt; B<br/>R &gt; B &gt; G<br/>G &gt; R &gt; B<br/>G &gt; B &gt; R<br/>B &gt; R &gt; G<br/>B &gt; G &gt; R</td></tr>
+ <tr><td>G &gt; R &gt; B</td>
+     <td>R &gt; G &gt; B<br/>R &gt; B &gt; G<br/>G &gt; R &gt; B<br/>G &gt; B &gt; R<br/>B &gt; R &gt; G<br/>B &gt; G &gt; R</td></tr>
+ <tr><td>G &gt; B &gt; R</td>
+     <td>R &gt; G &gt; B<br/>R &gt; B &gt; G<br/>G &gt; R &gt; B<br/>G &gt; B &gt; R<br/>B &gt; R &gt; G<br/>B &gt; G &gt; R</td></tr>
+ <tr><td>B &gt; R &gt; G</td>
+     <td>R &gt; G &gt; B<br/>R &gt; B &gt; G<br/>G &gt; R &gt; B<br/>G &gt; B &gt; R<br/>B &gt; R &gt; G<br/>B &gt; G &gt; R</td></tr>
+ <tr><td>B &gt; G &gt; R</td>
+     <td>R &gt; G &gt; B<br/>R &gt; B &gt; G<br/>G &gt; R &gt; B<br/>G &gt; B &gt; R<br/>B &gt; R &gt; G<br/>B &gt; G &gt; R</td></tr>
+</table>
+</center>
